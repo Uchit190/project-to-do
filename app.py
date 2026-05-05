@@ -43,7 +43,7 @@ def get_current_user():
 
 @app.route('/')
 def root():
-    return redirect(url_for('login'))
+    return redirect('/login')
 
 
 @app.route('/login', methods=['GET', 'POST'])
