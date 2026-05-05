@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>TaskFlow — Sign Up</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+    <div class="bg-orbs">
+        <div class="orb orb1"></div>
+        <div class="orb orb2"></div>
+        <div class="orb orb3"></div>
+    </div>
+
+    <main class="container login-container">
+        <header class="header">
+            <h1 class="title">TaskFlow</h1>
+            <p class="subtitle">Create your free account</p>
+        </header>
+
+        <div class="login-card">
+            <div class="login-field">
+                <label for="email">Email</label>
+                <input type="email" id="email" class="task-input full-width" placeholder="you@example.com" autocomplete="email"/>
+            </div>
+            <div class="login-field">
+                <label for="password">Password <span style="color:var(--muted);font-weight:400;">(min. 6 chars)</span></label>
+                <input type="password" id="password" class="task-input full-width" placeholder="Create a password" autocomplete="new-password"/>
+            </div>
+
+            <div id="errorMsg"   class="error-msg"   style="display:none;"></div>
+            <div id="successMsg" class="success-msg" style="display:none;"></div>
+
+            <button id="signupBtn" class="login-btn">Create Account</button>
+
+            <p class="auth-switch">Already have an account? <a href="/login" class="auth-link">Sign in</a></p>
+        </div>
+    </main>
+
+    <script>
+        const signupBtn  = document.getElementById('signupBtn');
+        const errorMsg   = document.getElementById('errorMsg');
+        const successMsg = document.getElementById('successMsg');
+
+        function doSignup() {
+            const email    = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            if (!email || !password) { showError('Please fill in all fields.'); return; }
+
+            signupBtn.disabled = true;
+            signupBtn.textContent = 'Creating account...';
+            errorMsg.style.display = 'none';
+            successMsg.style.display = 'none';
+
+            fetch('/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    successMsg.textContent = data.message;
+                    successMsg.style.display = 'block';
+                    signupBtn.style.display = 'none';
+                } else {
+                    showError(data.message || 'Signup failed.');
+                }
+            })
+            .catch(() => showError('Network error. Please try again.'))
+            .finally(() => { signupBtn.disabled = false; if(signupBtn.style.display !== 'none') signupBtn.textContent = 'Create Account'; });
+        }
+
+        function showError(msg) { errorMsg.textContent = msg; errorMsg.style.display = 'block'; }
+
+        signupBtn.addEventListener('click', doSignup);
+        document.addEventListener('keydown', e => { if (e.key === 'Enter') doSignup(); });
+    </script>
+</body>
+</html>
