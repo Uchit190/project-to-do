@@ -43,8 +43,6 @@ def get_current_user():
 
 @app.route('/')
 def root():
-    if get_current_user():
-        return redirect(url_for('todo'))
     return redirect(url_for('login'))
 
 
