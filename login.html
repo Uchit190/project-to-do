@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>TaskFlow — Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+    <div class="bg-orbs">
+        <div class="orb orb1"></div>
+        <div class="orb orb2"></div>
+        <div class="orb orb3"></div>
+    </div>
+
+    <main class="container login-container">
+        <header class="header">
+            <h1 class="title">TaskFlow</h1>
+            <p class="subtitle">Sign in to your account</p>
+        </header>
+
+        <div class="login-card">
+            <div class="login-field">
+                <label for="email">Email</label>
+                <input type="email" id="email" class="task-input full-width" placeholder="you@example.com" autocomplete="email"/>
+            </div>
+            <div class="login-field">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="task-input full-width" placeholder="Your password" autocomplete="current-password"/>
+            </div>
+
+            <div id="errorMsg" class="error-msg" style="display:none;"></div>
+
+            <button id="loginBtn" class="login-btn">Sign In</button>
+
+            <p class="auth-switch">Don't have an account? <a href="/signup" class="auth-link">Create one</a></p>
+        </div>
+    </main>
+
+    <script>
+        const loginBtn = document.getElementById('loginBtn');
+        const errorMsg = document.getElementById('errorMsg');
+
+        function doLogin() {
+            const email    = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            if (!email || !password) { showError('Please enter your email and password.'); return; }
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Signing in...';
+            errorMsg.style.display = 'none';
+
+            fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) { window.location.href = data.redirect; }
+                else { showError(data.message || 'Login failed.'); }
+            })
+            .catch(() => showError('Network error. Please try again.'))
+            .finally(() => { loginBtn.disabled = false; loginBtn.textContent = 'Sign In'; });
+        }
+
+        function showError(msg) { errorMsg.textContent = msg; errorMsg.style.display = 'block'; }
+
+        loginBtn.addEventListener('click', doLogin);
+        document.addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+    </script>
+</body>
+</html>

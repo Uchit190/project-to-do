@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>TaskFlow — To-Do List</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body>
+    <div class="bg-orbs">
+        <div class="orb orb1"></div>
+        <div class="orb orb2"></div>
+        <div class="orb orb3"></div>
+    </div>
+
+    <main class="container">
+        <header class="header">
+            <div class="topbar">
+               <span class="welcome-badge">✉ {{ email }}</span>
+               {% if role == 'admin' %}
+               <a href="/admin" class="logout-link">Admin Panel</a>
+               {% endif %}
+               <a href="/logout" class="logout-link">Logout</a>
+          </div>
+            <h1 class="title">TaskFlow</h1>
+            <p class="subtitle">Stay on top of your day</p>
+        </header>
+
+        <div class="input-row">
+            <input type="text" id="taskInput" class="task-input" placeholder="What needs to be done?" autocomplete="off" maxlength="120"/>
+            <button id="addBtn" class="add-btn" aria-label="Add task"><span class="plus">+</span></button>
+        </div>
+
+        <div class="filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="active">Active</button>
+            <button class="filter-btn" data-filter="completed">Done</button>
+        </div>
+
+        <ul class="task-list" id="taskList">
+            <li class="empty-state"><span class="empty-icon">✦</span><span>No tasks yet. Add one above!</span></li>
+        </ul>
+
+        <footer class="footer" id="footer" style="display:none;">
+            <span id="taskCount">0 tasks left</span>
+            <button id="clearBtn" class="clear-btn">Clear completed</button>
+        </footer>
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
